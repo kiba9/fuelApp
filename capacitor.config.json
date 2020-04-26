@@ -1,0 +1,8 @@
+{
+  "appId": "com.investici.fueltracker",
+  "appName": "fuelTracker",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "cordova": {}
+}
