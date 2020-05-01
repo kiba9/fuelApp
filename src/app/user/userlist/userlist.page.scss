@@ -1,0 +1,19 @@
+ion-content {
+  --background: #ffffff;
+  font-family: nexalight, sans-serif;
+}
+
+ion-toolbar {
+  --padding-top: -0.5vh;
+  --opacity: 1;
+  --border-width: 0;
+  --background: linear-gradient(-45deg, #0060bb -30%, #15a08d 70%);
+}
+
+ion-list {
+  transition: 0.5s;
+}
+
+ion-item {
+  --transition: 0.5s;
+}

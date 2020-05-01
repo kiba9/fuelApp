@@ -1,0 +1,31 @@
+<ion-header class="ion-no-border" mode="md">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="closeModal()" color="light">
+                <ion-icon color="white" name="close" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title color="light">Créer un Fournisseur</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list class="info-list">
+
+        <ion-item>
+            <ion-icon color="primary" name="person-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Nom</ion-label>
+            <ion-input [(ngModel)]="fournisseur.nom" inputmode="text" required="true" type="text"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-icon color="primary" name="pin" slot="start"></ion-icon>
+            <ion-label position="floating">adresse</ion-label>
+            <ion-input [(ngModel)]="fournisseur.adresse" inputmode="text" required="true" type="text"></ion-input>
+        </ion-item>
+
+    </ion-list>
+
+    <ion-button (click)="submitRequest()" class="btn_connexion" expand="block" mode="md">Enregistrer</ion-button>
+
+</ion-content>

@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
   {
@@ -10,6 +10,30 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },
+    {
+        path: 'user/userlist',
+        loadChildren: () => import('./user/userlist/userlist.module').then(m => m.UserlistPageModule)
+    },
+    {
+        path: 'dashbord',
+        loadChildren: () => import('./dashbord/dashbord.module').then(m => m.DashbordPageModule)
+    },
+    {
+        path: 'fournisseur/vendorlist',
+        loadChildren: () => import('./fournisseur/vendorlist/vendorlist.module').then(m => m.VendorlistPageModule)
+    },
+    {
+        path: 'fueltype/fuellist',
+        loadChildren: () => import('./fueltype/fuellist/fuellist.module').then(m => m.FuellistPageModule)
+    },
+  {
+    path: 'station/stationlist',
+    loadChildren: () => import('./station/stationlist/stationlist.module').then( m => m.StationlistPageModule)
+  },
+  {
+    path: 'station/menu',
+    loadChildren: () => import('./station/menu/menu.module').then( m => m.MenuPageModule)
   },
 ];
 

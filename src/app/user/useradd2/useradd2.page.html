@@ -1,0 +1,62 @@
+<ion-header class="ion-no-border">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="closeModal()" color="light">
+                <ion-icon color="white" name="chevron-back" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title color="light">Créer un Compte</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+    <ion-list class="info-list">
+
+        <ion-item>
+            <ion-icon color="primary" name="person-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Login</ion-label>
+            <ion-input [(ngModel)]="utilisateur.username" inputmode="text" required="true" type="text"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-icon color="primary" name="shield-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Mot de passe</ion-label>
+            <ion-input [(ngModel)]="password" inputmode="text" minlength="6" required="true"
+                       type="password"></ion-input>
+        </ion-item>
+
+        <ion-item class="item">
+            <ion-label position="floating">Confirmer</ion-label>
+            <ion-input [(ngModel)]="passwordConfirm" inputmode="text" minlength="6" required="true"
+                       type="password"></ion-input>
+            <ion-icon color="primary" name="shield-checkmark-outline" slot="start"></ion-icon>
+        </ion-item>
+
+        <ion-item class="item">
+            <ion-icon color="primary" name="business-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Statut Utilisateur</ion-label>
+            <ion-select [(ngModel)]="utilisateur.statutUtilisateur" interface="popover">
+                <ion-select-option value="Personne_Morale">Personne_Morale</ion-select-option>
+                <ion-select-option value="Personne_Physique">Personne_Physique</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item class="item">
+            <ion-label position="floating">Part d'action</ion-label>
+            <ion-input [(ngModel)]="utilisateur.partAction" inputmode="decimal" required="true"
+                       type="number"></ion-input>
+            <ion-icon color="primary" name="cash-outline" slot="start"></ion-icon>
+        </ion-item>
+
+        <ion-item class="item" lines="none" style="margin-top: 5%">
+            <ion-icon color="primary" name="ribbon-outline" slot="start"></ion-icon>
+            <ion-label>Administrateur</ion-label>
+            <ion-checkbox [(ngModel)]="isAdmin" color="primary" slot="end"></ion-checkbox>
+        </ion-item>
+
+    </ion-list>
+
+    <ion-button (click)="submitRequest()" class="btn_connexion" expand="block" mode="md">Enregistré</ion-button>
+
+</ion-content>

@@ -1,5 +1,7 @@
 {
   "name": "fuelApp",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

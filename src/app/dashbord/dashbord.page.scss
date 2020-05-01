@@ -1,0 +1,54 @@
+ion-content {
+  --background: rgb(245, 245, 245);
+  font-family: nexalight, sans-serif;
+}
+
+.logo-img {
+  display: block;
+  width: 55%;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 15%;
+}
+
+.coln {
+  text-align: center;
+  //background-color: red;
+}
+
+.col_title {
+  position: relative;
+  text-align: center;
+  margin-top: 10%;
+  color: rgb(68, 137, 219);
+}
+
+
+ion-grid {
+  position: relative;
+  margin: 5% auto;
+  width: 90%;
+  margin-top: 15%;
+}
+
+ion-row {
+  position: relative;
+}
+
+ion-icon {
+  font-size: 6vw;
+}
+
+ion-item {
+  --border-width: 1px;
+  --border-radius: 25px;
+  --border-style: solid;
+  --border-color: white;
+  width: 46%;
+  margin: 2%;
+  --background: #fefefe;
+  --padding-top: 20%;
+  --padding-bottom: 20%;
+  --padding-start: 5%;
+  box-shadow: 2px 6px 40px #ededed;
+}

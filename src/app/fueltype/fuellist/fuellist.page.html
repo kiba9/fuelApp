@@ -1,0 +1,56 @@
+<ion-header>
+    <ion-toolbar style="padding-bottom: 10px;">
+        <ion-buttons slot="start">
+            <ion-back-button color="light" defaultHref="/" icon="chevron-back" style="margin-top: 1vh;">
+            </ion-back-button>
+        </ion-buttons>
+        <ion-title color="light" style="margin-top: 5px; font-size:4vw">Type de Carburant</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+    <ion-list *ngIf="fuelList; else skeleton">
+        <ion-card *ngFor="let typecarb of fuelList" class="ion-activatable" mode="ios">
+            <ion-ripple-effect></ion-ripple-effect>
+            <ion-item class="stion_colr1" lines="none">
+                <ion-card-header>
+                    <ion-card-title color="light">{{typecarb.libelle}}</ion-card-title>
+                </ion-card-header>
+                <ion-icon color="light" name="water" slot="start"></ion-icon>
+                <ion-button (click)="doOperation($event, typecarb)" color="light" fill="clear" slot="end">
+                    <ion-icon name="ellipsis-horizontal" slot="icon-only"></ion-icon>
+                </ion-button>
+            </ion-item>
+            <ion-item class="stion_colr1" lines="none">
+                <ion-badge color="light">Prix vente {{typecarb.prixVente}} Fcfa</ion-badge>&nbsp;
+                <ion-badge color="dark">Prix achat {{typecarb.prixAchat}} Fcfa</ion-badge>
+            </ion-item>
+        </ion-card>
+    </ion-list>
+
+    <ng-template #skeleton>
+        <ion-item *ngFor="let key of  [0,1,2,3,4,5]">
+            <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <ion-label>
+                <p>
+                    <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+                </p>
+                <p>
+                    <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
+                </p>
+            </ion-label>
+        </ion-item>
+    </ng-template>
+
+
+    <ion-fab horizontal="end" slot="fixed" style="margin: 3vh" vertical="bottom">
+        <ion-fab-button (click)="createFuel()" color="primary">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+
+</ion-content>

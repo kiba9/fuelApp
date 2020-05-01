@@ -1,20 +1,23 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="true" class="ion-no-border">
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <img class="img_fuel" src="../../assets/images/bgback.png">
+  <div class="login-header">
+    <img class="logo-img" src="../../assets/images/logo.png">
+  </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="connexion">
+    <ion-label class="ion-padding label">Username or Email</ion-label>
+    <ion-input [(ngModel)]="loginUser" class="input_login" inputmode="text" placeholder="Ex: 69090" required="true"
+               type="text"></ion-input>
+
+    <ion-label class="ion-padding label">Mot de passe</ion-label>
+    <ion-input [(ngModel)]="password" class="input_login" inputmode="text" placeholder="password" required="true"
+               type="password"></ion-input>
+
+    <div linespace></div>
+    <ion-button (click)="submitRequest()" class="btn_connexion" expand="block" mode="md">Connexion</ion-button>
+
   </div>
 </ion-content>

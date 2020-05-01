@@ -1,0 +1,62 @@
+<ion-header>
+</ion-header>
+
+<ion-content>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button color="light" defaultHref="/" icon="chevron-back">
+            </ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
+
+    <div class="banner">
+        <ion-card-title>
+            {{station.nom}}
+        </ion-card-title>
+        <ion-card-subtitle>
+            <ion-item lines="none">
+                <ion-icon name="location" color="white"></ion-icon>
+                <ion-label>{{station.adresse}}</ion-label>
+            </ion-item>
+        </ion-card-subtitle>
+    </div>
+
+    <ion-grid>
+        <ion-row class="divider">
+            <ion-col class="coln col_div ion-activatable">
+                <ion-ripple-effect></ion-ripple-effect>
+                <ion-icon name="people"></ion-icon>
+                <div class="col_title">Actionnaires</div>
+            </ion-col>
+
+            <ion-col class="coln col_div ion-activatable">
+                <ion-ripple-effect></ion-ripple-effect>
+                <ion-icon name="cube"></ion-icon>
+                <div class="col_title">Fournisseurs</div>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class="divider">
+            <ion-col class="coln col_div ion-activatable">
+                <ion-ripple-effect></ion-ripple-effect>
+                <ion-icon name="timer"></ion-icon>
+                <div class="col_title">Consommation</div>
+            </ion-col>
+
+            <ion-col class="coln col_div ion-activatable">
+                <ion-ripple-effect></ion-ripple-effect>
+                <ion-icon name="receipt"></ion-icon>
+                <div class="col_title">Commande</div>
+            </ion-col>
+        </ion-row>
+
+    </ion-grid>
+
+    <div class="map_content" id="map">
+
+    </div>
+
+
+
+
+</ion-content>

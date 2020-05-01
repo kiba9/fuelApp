@@ -1,0 +1,91 @@
+ion-content{
+  --background: #f4f4f4;
+  font-family: nexalight, sans-serif;
+}
+
+ion-toolbar{
+  --padding-top: 5%;
+  --opacity: 0;
+}
+
+.banner {
+  position: relative;
+  width: 100%;
+  margin-top: -25%;
+  height: 35%;
+  background: linear-gradient(-45deg, rgba(0,96,187,0.6) -30%, rgba(21, 160, 141, 0.45) 70%), url("../../../assets/images/station.jpg");
+  background-size: cover;
+}
+
+ion-grid{
+  position: relative;
+  margin: 0 auto;
+}
+
+ion-col{
+  width: 46%;
+  height: 15vh;
+  padding-top: 5%;
+}
+
+.divider{
+  border-width: 1px 1px 0 1px;
+  border-style: solid;
+  border-color: #ededed;
+}
+
+.coln {
+  text-align: center;
+  //background-color: red;
+}
+
+.col_title {
+  position : relative;
+  text-align: center;
+  margin-top : 10%;
+  color :#03735d
+}
+
+ion-icon {
+  font-size: 150%;
+  color: #15a08d;
+}
+
+ion-item{
+  color: white;
+  --background: transparent;
+  font-size: 100%;
+}
+
+
+.col_div {
+  border-width: 0 1px 0 1px;
+  border-style: solid;
+  border-color: #ededed;
+}
+
+
+.col_div-duo {
+  border-width: 0 0 0 1px;
+  border-style: solid;
+  border-color: #ededed;
+}
+
+ion-card-title{
+  color: #fff;
+  position: relative;
+  bottom: -60%;
+  font-size: 170%;
+  padding-left: 5%;
+}
+
+ion-card-subtitle {
+  bottom: -55%;
+}
+
+.map_content {
+  position: relative;
+  margin: 0 auto;
+  width: 90%;
+  height: 30%;
+}

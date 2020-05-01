@@ -1,0 +1,68 @@
+<ion-header>
+    <ion-toolbar style="padding-bottom: 10px;">
+        <ion-buttons slot="start">
+            <ion-back-button color="light" defaultHref="/" icon="chevron-back" style="margin-top: 1vh;">
+            </ion-back-button>
+        </ion-buttons>
+        <ion-title color="light" style="margin-top: 5px; font-size:4vw">Liste des Actionnaires</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-searchbar (ionInput)="filterList($event)" mode="ios" style="margin: 0.5%;"></ion-searchbar>
+
+
+    <ion-list-header mode="ios" style="padding-bottom: 7%;">Actionnaires</ion-list-header>
+    <ion-list *ngIf="userfilterList; else skeleton">
+        <ion-item-sliding *ngFor="let item of userfilterList">
+            <ion-item-options side="start">
+                <ion-item-option (click)="deleteUser(item)" color="danger" expandable>
+                    Delete
+                    <ion-icon name="trash" slot="start"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+
+            <ion-item class="item-remove-animate item" detail="false" mode="ios">
+                <ion-avatar slot="start"><img alt="" src="../../../assets/images/avatar.svg"></ion-avatar>
+                <ion-label>
+                    <h3>{{item.nom + ' ' + item.prenom}}</h3>
+                    <p>{{item.nationalite}}</p>
+                </ion-label>
+                <ion-badge color="tertiary" slot="end">{{item.partAction}}</ion-badge>
+            </ion-item>
+
+            <ion-item-options side="end">
+                <ion-item-option (click)="updateUser(item)" color="tertiary">
+                    Modifier
+                    <ion-icon name="create" slot="end"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+
+        </ion-item-sliding>
+
+    </ion-list>
+
+    <ng-template #skeleton>
+        <ion-item *ngFor="let key of  [0,1,2,3,4,5]">
+            <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <ion-label>
+                <p>
+                    <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+                </p>
+                <p>
+                    <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
+                </p>
+            </ion-label>
+        </ion-item>
+    </ng-template>
+
+
+    <ion-fab horizontal="end" slot="fixed" style="margin: 3vh" vertical="bottom">
+        <ion-fab-button (click)="createUser()" color="primary">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+</ion-content>

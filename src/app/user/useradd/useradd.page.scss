@@ -1,0 +1,42 @@
+.content-pay {
+  position: relative;
+  width: 100%;
+  height: 35%;
+  padding: 1.5vh;
+  background: #15A08D;
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+}
+
+ion-toolbar {
+  --background: linear-gradient(-45deg, #0060bb -30%, #15a08d 70%);
+}
+
+.info-list {
+  margin: 5%;
+  font-style: normal;
+
+}
+
+.btn_connexion {
+  --padding-top: 8%;
+  --padding-bottom: 8%;
+  font-size: 4.5vw;
+  margin: 4%;
+  margin-top: 17%;
+  --background: #E48F38;
+  color: white;
+  --border-radius: 0;
+  --box-shadow: 0;
+  font-family: montserrat, sans-serif;
+  z-index: 1;
+  text-transform: capitalize;
+}
+
+.display_btn {
+  display: block;
+}
+
+.not_display_btn {
+  display: none;
+}
