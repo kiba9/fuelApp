@@ -10,7 +10,7 @@ import {NavigationExtras} from '@angular/router';
 })
 export class DataProviderService {
 
-    server = 'http://localhost:8085/fueltracker-0.0.1-SNAPSHOT/';
+    server = 'http://ec2-18-185-227-132.eu-central-1.compute.amazonaws.com/fueltracker-0.0.1-SNAPSHOT/';
 
     optionRequete = {
         headers: new HttpHeaders({
