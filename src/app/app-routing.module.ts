@@ -8,7 +8,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'dashbord',
     pathMatch: 'full'
   },
     {
@@ -34,6 +34,22 @@ const routes: Routes = [
   {
     path: 'station/menu',
     loadChildren: () => import('./station/menu/menu.module').then( m => m.MenuPageModule)
+  },
+  {
+    path: 'station/menu/actionnaire',
+    loadChildren: () => import('./menu/actionnaire/actionnaire.module').then( m => m.ActionnairePageModule)
+  },
+  {
+    path: 'station/menu/pompes',
+    loadChildren: () => import('./menu/pompes/pompes.module').then( m => m.PompesPageModule)
+  },
+  {
+    path: 'station/menu/reservoir',
+    loadChildren: () => import('./menu/reservoir/reservoir.module').then( m => m.ReservoirPageModule)
+  },
+  {
+    path: 'station/menu/commande',
+    loadChildren: () => import('./menu/commande/commande.module').then( m => m.CommandePageModule)
   },
 ];
 

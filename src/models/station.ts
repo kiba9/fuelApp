@@ -3,7 +3,7 @@ export class Station {
     nom: '';
     adresse: '';
     listeActionnaires?: any[];
-    fournisseur?: string;
+    fournisseur?: any;
     Pompe?: any[];
     commande?: any[];
 

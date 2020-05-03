@@ -89,3 +89,42 @@ ion-card-subtitle {
   width: 90%;
   height: 30%;
 }
+
+/*************ionic fab button with label*******/
+
+
+ion-fab-button[data-desc] {
+  position: relative;
+  transition: 0.5s;
+}
+
+ion-fab-button[data-desc]::after {
+  position: absolute;
+  content: attr(data-desc);
+  z-index: 1;
+  right: 55px;
+  bottom: 4px;
+  background-color: var(--ion-color-primary);
+  padding: 9px;
+  border-radius: 15px;
+  color: white;
+  box-shadow: 0 3px 5px -1px rgba(0,0,0,0.2), 0 6px 10px 0 rgba(0,0,0,0.14), 0 1px 18px 0 rgba(0,0,0,0.12);
+}
+
+@keyframes example {
+  from {opacity: 0.3;}
+  to {opacity: 0.2;}
+}
+
+#ListBackdrop{
+  background-color: #0a0a0a !important;
+  position: fixed !important;
+  height: 100vh;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  opacity: 0.2;
+  animation-name: example;
+  animation-duration: 0.5s;
+}
+

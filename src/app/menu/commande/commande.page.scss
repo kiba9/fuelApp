@@ -1,0 +1,37 @@
+ion-content {
+  --background: #ffffff;
+  font-family: nexalight, sans-serif;
+}
+
+ion-toolbar {
+  --background: linear-gradient(-45deg, #0060bb -30%, #15a08d 70%);
+}
+
+.segment {
+  position: fixed;
+  --background: #eff0f2;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  border-color: #cacaca;
+  z-index: 1;
+  width: 100%;
+}
+
+.segment_btn{
+  --color: #6e6e6e;
+  font-family: montserrat, sans-serif;
+  --indicator-color: #E48F38;
+  --color-checked:#E48F38;
+  text-transform: capitalize;
+  --indicator-height: 0.5vh;
+}
+
+ion-item{
+  h3{
+    font-size: 4.5vw;
+    color: var(--ion-color-primary);
+  }
+  p{
+    font-size: 3.8vw;
+  }
+}

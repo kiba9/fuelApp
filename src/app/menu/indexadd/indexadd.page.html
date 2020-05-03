@@ -1,0 +1,56 @@
+<ion-header class="ion-no-border" mode="md">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()" color="light">
+        <ion-icon color="white" name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title color="light">Ajouter Index</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list class="info-list">
+
+    <ion-item>
+      <ion-icon color="primary" name="barcode-outline" slot="start"></ion-icon>
+      <ion-label position="floating">Numero de l'index</ion-label>
+      <ion-input [(ngModel)]="indexC.numero" inputmode="decimal" required="true" type="number"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon color="primary" name="library" slot="start"></ion-icon>
+      <ion-label position="floating">Description</ion-label>
+      <ion-input [(ngModel)]="indexC.description" inputmode="text" required="true" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon color="primary" name="timer" slot="start"></ion-icon>
+      <ion-label position="floating">Volume Vendu</ion-label>
+      <ion-input [(ngModel)]="indexC.volumeVendu" inputmode="decimal" required="true" type="number"></ion-input>
+    </ion-item>
+
+    <ion-item [disabled]="!isPompe">
+      <ion-icon color="primary" name="color-fill" slot="start"></ion-icon>
+      <ion-label position="floating">Pompe</ion-label>
+      <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="pompe">
+        <ion-select-option *ngFor=" let pmp of listPompeStation"
+                           [value]="pmp">{{pmp.nom}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item [disabled]="isPompe">
+      <ion-icon color="primary" name="beaker" slot="start"></ion-icon>
+      <ion-label position="floating">Reservoir</ion-label>
+      <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="reservoir">
+        <ion-select-option *ngFor=" let rsvoir of listReservoirStation"
+                           [value]="rsvoir">{{rsvoir.nom}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+  </ion-list>
+
+  <ion-button (click)="submitRequest()" class="btn_connexion" expand="block" mode="md">Enregistrer</ion-button>
+
+
+</ion-content>

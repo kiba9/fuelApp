@@ -1,0 +1,40 @@
+<ion-header class="ion-no-border" mode="md">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()" color="light">
+        <ion-icon color="white" name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title color="light">Ajouter un reservoir</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-list class="info-list">
+
+    <ion-item>
+      <ion-icon color="primary" name="beaker" slot="start"></ion-icon>
+      <ion-label position="floating">Libelle</ion-label>
+      <ion-input [(ngModel)]="reservoir.libelle" inputmode="text" required="true" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon color="primary" name="stopwatch" slot="start"></ion-icon>
+      <ion-label position="floating">Volume Total</ion-label>
+      <ion-input [(ngModel)]="reservoir.volumeReservoir" inputmode="decimal" required="true" type="number"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon color="primary" name="water" slot="start"></ion-icon>
+      <ion-label position="floating">Type Carburant</ion-label>
+      <ion-select  [interfaceOptions]="customAlertOptions" [(ngModel)]="reservoir.typeCarburant" >
+        <ion-select-option *ngFor=" let fuel of listFuelType" [value]="fuel">{{fuel.libelle}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+  </ion-list>
+
+  <ion-button (click)="submitRequest()" class="btn_connexion" expand="block" mode="md">Enregistrer</ion-button>
+
+</ion-content>

@@ -1,0 +1,83 @@
+<ion-header>
+    <ion-toolbar style="padding-bottom: 10px;">
+        <ion-buttons slot="start">
+            <ion-back-button color="light" defaultHref="/" icon="chevron-back" style="margin-top: 1vh;">
+            </ion-back-button>
+        </ion-buttons>
+        <ion-title color="light" style="margin-top: 5px; font-size:4vw">Liste des Pompes</ion-title>
+        <ion-buttons slot="end">
+        <ion-button color="light" slot="icon-only" (click)="createIndexCarburant()" style="margin-top: 1vh;">
+            <ion-icon name="add-circle"></ion-icon>
+        </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullMin="100" pullMax="200" style="margin-top: 3%">
+        <ion-refresher-content
+                pullingIcon="arrow-down"
+                pullingText="Tiré pour rafraîchir"
+                refreshingSpinner="circles"
+                refreshingText="Rafraîchissement">
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-segment class="segment" scrollable="true" [(ngModel)]="segmentModel" (ionChange)="segmentChanged()">
+        <ion-segment-button value="{{pompe.code}}" class="segment_btn"
+                            *ngFor="let pompe of listePompes">{{pompe.libelle}}</ion-segment-button>
+    </ion-segment>
+
+    <ng-template #skeleton>
+        <ion-list style="margin-top: 11%">
+            <ion-item *ngFor="let i of [1,2, 3, 4, 5]">
+                <ion-thumbnail slot="start">
+                    <ion-skeleton-text></ion-skeleton-text>
+                </ion-thumbnail>
+                <ion-label>
+                    <h3>
+                        <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+                    </h3>
+                    <p>
+                        <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+                    </p>
+                    <p>
+                        <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
+                    </p>
+                </ion-label>
+            </ion-item>
+        </ion-list>
+    </ng-template>
+
+    <ion-list style="margin-top: 10%" *ngIf="dataList.length > 0 else skeleton">
+
+        <ion-item-sliding *ngFor="let item of dataList">
+            <ion-item-options side="start">
+                <ion-item-option (click)="deleteIndexPompe(item)" color="danger" expandable>
+                    Delete
+                    <ion-icon name="trash" slot="start"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+
+            <ion-item>
+                <ion-icon src="assets/icon/fuel.svg" slot="start"></ion-icon>
+                <ion-label>
+                    <h3>{{item.description}} [{{item.numero}}]</h3>
+                    <p>Nvlle. Indx {{item.volumeVendu}} </p>
+                    <p>Anc. Indx {{item.ancienIndex}}</p>
+                </ion-label>
+                <ion-note slot="end">{{item.dateCommande}}</ion-note>
+            </ion-item>
+
+
+            <ion-item-options side="end">
+                <ion-item-option (click)="updatePompe(item)" color="tertiary">
+                    Modifier
+                    <ion-icon name="create" slot="end"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
+
+</ion-content>

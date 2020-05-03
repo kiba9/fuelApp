@@ -23,16 +23,30 @@
 
     <ion-grid>
         <ion-row class="divider">
-            <ion-col class="coln col_div ion-activatable">
+            <ion-col class="coln col_div ion-activatable" (click)="openPage('station/menu/actionnaire')">
                 <ion-ripple-effect></ion-ripple-effect>
                 <ion-icon name="people"></ion-icon>
                 <div class="col_title">Actionnaires</div>
             </ion-col>
 
-            <ion-col class="coln col_div ion-activatable">
+            <ion-col class="coln col_div ion-activatable" (click)="setFournisseur()">
                 <ion-ripple-effect></ion-ripple-effect>
                 <ion-icon name="cube"></ion-icon>
-                <div class="col_title">Fournisseurs</div>
+                <div class="col_title">Fournisseur</div>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class="divider">
+            <ion-col class="coln col_div ion-activatable" (click)="openPage('station/menu/reservoir')">
+                <ion-ripple-effect></ion-ripple-effect>
+                <ion-icon name="beaker"></ion-icon>
+                <div class="col_title">Reservoirs</div>
+            </ion-col>
+
+            <ion-col class="coln col_div ion-activatable" (click)="openPage('station/menu/pompes')">
+                <ion-ripple-effect></ion-ripple-effect>
+                <ion-icon name="color-fill"></ion-icon>
+                <div class="col_title">Pompes</div>
             </ion-col>
         </ion-row>
 
@@ -43,7 +57,7 @@
                 <div class="col_title">Consommation</div>
             </ion-col>
 
-            <ion-col class="coln col_div ion-activatable">
+            <ion-col class="coln col_div ion-activatable" (click)="openPage('station/menu/commande')">
                 <ion-ripple-effect></ion-ripple-effect>
                 <ion-icon name="receipt"></ion-icon>
                 <div class="col_title">Commande</div>
@@ -52,9 +66,31 @@
 
     </ion-grid>
 
-    <div class="map_content" id="map">
+    <!--<div class="map_content" id="map">
 
-    </div>
+    </div>-->
+
+    <div id="ListBackdrop" *ngIf="fabButtonOpened" ></div>
+
+    <ion-fab vertical="bottom" horizontal="end" (click)=" fabButtonOpened = !fabButtonOpened;">
+        <ion-fab-button>
+            <ion-icon name="add" color="light"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="top">
+            <ion-fab-button (click)="createReservoir()" data-desc="Nouveau Reservoir">
+                <ion-icon name="beaker"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button (click)="addPompe(pompe)" data-desc="Nouvelle Pompe">
+                <ion-icon name="color-fill"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button (click)="do1()" data-desc="Nouveau Commade">
+                <ion-icon name="receipt"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button (click)="do2()" data-desc="Ajouter Actionnaire">
+                <ion-icon name="person-add"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+    </ion-fab>
 
 
 
