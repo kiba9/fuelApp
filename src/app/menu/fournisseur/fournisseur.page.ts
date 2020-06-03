@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {LoadingController, ModalController, NavParams} from '@ionic/angular';
+import {LoadingController, ModalController, NavParams, ToastController} from '@ionic/angular';
 import {VendorService} from '../../../providers/vendor.service';
 import {DataProviderService} from '../../../providers/dataProvider.service';
 import {StationService} from '../../../providers/station.service';
+import {HTTP} from '@ionic-native/http/ngx';
+import {Vendor} from '../../../models/vendor';
 
 @Component({
     selector: 'app-fournisseur',
@@ -11,7 +13,8 @@ import {StationService} from '../../../providers/station.service';
 })
 export class FournisseurPage implements OnInit {
 
-    vendor;
+    vendor: Vendor = new Vendor();
+    selectVndr;
     station;
     loaderToShow: any;
     listFournisseur = [];
@@ -24,14 +27,28 @@ export class FournisseurPage implements OnInit {
 
 
     constructor(public navParams: NavParams, public modalCtrl: ModalController, public loadCtrl: LoadingController,
-                public vendorSvrc: VendorService, public staionSvrc: StationService) {
+                public toastCtrl: ToastController,  public nativeHttp: HTTP) {
         // recuperation du type de carburant passé en paramettre
         this.station = navParams.get('stationItem');
-        this.vendor = this.station.fournisseur;
+        this.getVendorList();
+    }
+
+    compareFn(e1: Vendor, e2: Vendor): boolean {
+        return e1 && e2 ? e1.idFournisseur == e2.idFournisseur : e1 == e2;
+    }
+
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
     }
 
     ngOnInit() {
-        this.getVendorList();
+        this.vendor = this.station.fournisseur;
     }
 
     async closeModal() {
@@ -40,7 +57,7 @@ export class FournisseurPage implements OnInit {
 
     submitRequest() {
         if (!DataProviderService.validateString(this.vendor.nom) || !DataProviderService.validateString(this.vendor.adresse)) {
-            this.vendorSvrc.alertMsg('Choissez un fournisseur', 2000, 'top', 'danger');
+            this.alertMsg('Choissez un fournisseur', 2000, 'top', 'danger');
         } else {
             this.station.fournisseur = this.vendor;
             console.log(this.station);
@@ -57,15 +74,16 @@ export class FournisseurPage implements OnInit {
             spinner: 'crescent'
         });
         await this.loaderToShow.present();
-
-        this.staionSvrc.updateStation(this.station).subscribe(response => {
-            if (response) {
+        this.nativeHttp.setDataSerializer('json');
+        this.nativeHttp.put(DataProviderService.updateStation, this.station, {}).then((response) => {
+            response.data = JSON.parse(response.data);
+            if(response.data){
                 this.loadCtrl.dismiss();
-                this.station = response;
+                this.station = response.data;
                 this.modalCtrl.dismiss(this.station);
             }
-        }, error1 => {
-            this.staionSvrc.alertMsg(error1.message, 3500, 'top', 'danger');
+        }).catch((error1) => {
+            this.alertMsg(error1.message, 3500, 'top', 'danger');
             this.loadCtrl.dismiss();
         });
     }
@@ -74,11 +92,12 @@ export class FournisseurPage implements OnInit {
      * recuperer la liste des fournisseur en base de données
      */
     getVendorList() {
-        this.vendorSvrc.getAllVendor().subscribe(response => {
-            this.listFournisseur = response;
-        },  async error1 => {
-            this.vendorSvrc.alertMsg(error1.message, 3500, 'top', 'danger');
-            await this.modalCtrl.dismiss();
+        this.nativeHttp.get(DataProviderService.getAllVendor, {}, {}).then((response) => {
+            response.data = JSON.parse(response.data);
+            this.listFournisseur = response.data;
+        }).catch((error1) => {
+            this.alertMsg(error1.message, 3500, 'top', 'danger');
+            this.modalCtrl.dismiss();
         });
     }
 

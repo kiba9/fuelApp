@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ModalController, NavParams} from '@ionic/angular';
+import {ModalController, NavParams, ToastController} from '@ionic/angular';
 import {UserService} from '../../../providers/user.service';
 import {DataProviderService} from '../../../providers/dataProvider.service';
 import {Useradd2Page} from '../useradd2/useradd2.page';
@@ -15,7 +15,7 @@ export class UseraddPage implements OnInit {
     utilisateur;
     countryList; // = require('../../../assets/pays.json'); // chargement de la liste des pays et nationalités
 
-    constructor(public navParams: NavParams, public modalCtrl: ModalController, public userSrvc: UserService, public http: HttpClient) {
+    constructor(public navParams: NavParams, public modalCtrl: ModalController, public toastCtrl: ToastController, public http: HttpClient) {
         this.utilisateur = navParams.get('user');
         this.http.get('assets/pays.json').subscribe( (res: any) => {
             this.countryList = res.pays;
@@ -23,6 +23,16 @@ export class UseraddPage implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
     }
 
     /**
@@ -34,7 +44,7 @@ export class UseraddPage implements OnInit {
             || !DataProviderService.validateString(this.utilisateur.nationalite)
             || !DataProviderService.validateString(this.utilisateur.pays)
             || !DataProviderService.validateString(this.utilisateur.adresse)) {
-            this.userSrvc.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
+            this.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
         } else {
             const modal = await this.modalCtrl.create({
                 animated: true,

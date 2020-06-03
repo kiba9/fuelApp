@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {LoadingController, ModalController, NavParams} from '@ionic/angular';
+import {LoadingController, ModalController, NavParams, ToastController} from '@ionic/angular';
 import {UserService} from '../../../providers/user.service';
 import {DataProviderService} from '../../../providers/dataProvider.service';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @Component({
     selector: 'app-useradd2',
@@ -17,8 +18,9 @@ export class Useradd2Page implements OnInit {
     loaderToShow: any;
     isAdmin = true;
 
-    constructor(public navParams: NavParams, public modalCtrl: ModalController, public userSrvc: UserService,
-                public loadCtrl: LoadingController) {
+    constructor(public navParams: NavParams, public modalCtrl: ModalController, public nativeHttp: HTTP,
+                public loadCtrl: LoadingController, public toastCtrl: ToastController) {
+        this.nativeHttp.setDataSerializer('json');
         // recuperation de l'utilisateur passé en paramettre
         this.utilisateur = navParams.get('user');
         // On indique si il s'agit de la mise a jour ou de la creation d'un utilisateur
@@ -35,6 +37,16 @@ export class Useradd2Page implements OnInit {
         await this.modalCtrl.dismiss();
     }
 
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
+    }
+
     /**
      *  @description permet de verfier si les champs necessaire pour créer un utilisateur sont bien remplis puis
      *  apple la methode adéquate soit creer / update
@@ -45,10 +57,10 @@ export class Useradd2Page implements OnInit {
             || !DataProviderService.validateString(this.utilisateur.statutUtilisateur) || this.utilisateur.partAction === null
             || this.utilisateur.partAction < 0) {
             console.log(this.utilisateur);
-            this.userSrvc.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
+            this.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
         } else {
             if (this.password !== this.passwordConfirm) {
-                this.userSrvc.alertMsg('Pass de correspondance entre les mots de passe', 2000, 'top', 'danger');
+                this.alertMsg('Pass de correspondance entre les mots de passe', 2000, 'top', 'danger');
             } else {
                 this.utilisateur.roles = this.isAdmin ? 'ADMIN' : 'USER';
                 this.utilisateur.password = this.passwordConfirm;
@@ -70,16 +82,16 @@ export class Useradd2Page implements OnInit {
             spinner: 'crescent'
         });
         await this.loaderToShow.present();
-        console.log(this.utilisateur);
 
-        this.userSrvc.createUser(this.utilisateur).subscribe(response => {
-            if (response) {
+        this.nativeHttp.post(DataProviderService.createUser, this.utilisateur, {}).then((response) => {
+            response.data = JSON.parse(response.data);
+            if(response.data){
                 this.loadCtrl.dismiss();
-                this.utilisateur = response;
+                this.utilisateur = response.data;
                 this.modalCtrl.dismiss(this.utilisateur);
             }
-        }, error1 => {
-            this.userSrvc.alertMsg(error1.message, 3500, 'top', 'danger');
+        }).catch((error1) => {
+            this.alertMsg(error1.message, 3500, 'top', 'danger');
             this.loadCtrl.dismiss();
         });
     }
@@ -94,11 +106,11 @@ export class Useradd2Page implements OnInit {
         });
         await this.loaderToShow.present();
 
-        this.userSrvc.updateUser(this.utilisateur).subscribe(response => {
+        this.nativeHttp.put(DataProviderService.updateUser, this.utilisateur, {}).then((response) => {
             this.loadCtrl.dismiss();
             this.modalCtrl.dismiss(this.utilisateur);
-        }, error1 => {
-            this.userSrvc.alertMsg(error1.message, 3500, 'top', 'danger');
+        }).catch((error1) => {
+            this.alertMsg(error1.message, 3500, 'top', 'danger');
             this.loadCtrl.dismiss();
         });
     }

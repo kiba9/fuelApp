@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {LoadingController, ModalController, NavParams} from '@ionic/angular';
-import {StationService} from '../../../providers/station.service';
+import {LoadingController, ModalController, NavParams, ToastController} from '@ionic/angular';
 import {DataProviderService} from '../../../providers/dataProvider.service';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @Component({
   selector: 'app-stationadd',
@@ -15,8 +15,9 @@ export class StationaddPage implements OnInit {
   loaderToShow: any;
 
 
-  constructor(public navParams: NavParams, public modalCtrl: ModalController, public stationSvrc: StationService,
-              public loadCtrl: LoadingController ) {
+  constructor(public navParams: NavParams, public modalCtrl: ModalController, public nativeHttp: HTTP,
+              public toastCtrl: ToastController, public loadCtrl: LoadingController ) {
+    this.nativeHttp.setDataSerializer('json');
     // recuperation du type de carburant passé en paramettre
     this.station = navParams.get('stationItem');
     // On indique si il s'agit de la mise a jour ou de la creation d'un utilisateur
@@ -26,6 +27,16 @@ export class StationaddPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  async alertMsg(msg, time, pos, colr) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: time,
+      position: pos,
+      color: colr
+    });
+    toast.present();
   }
 
   async closeModal() {
@@ -38,7 +49,7 @@ export class StationaddPage implements OnInit {
    */
   submitRequest() {
     if (!DataProviderService.validateString(this.station.nom) || !DataProviderService.validateString(this.station.adresse)) {
-      this.stationSvrc.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
+      this.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
     } else {
       if (this.isCreate) {
         this.createStation();
@@ -58,14 +69,15 @@ export class StationaddPage implements OnInit {
     });
     await this.loaderToShow.present();
 
-    this.stationSvrc.createStation(this.station).subscribe(response => {
-      if (response) {
+    this.nativeHttp.post(DataProviderService.createStation, this.station, {}).then((response) => {
+      response.data = JSON.parse(response.data);
+      if(response.data){
         this.loadCtrl.dismiss();
-        this.station = response;
+        this.station = response.data;
         this.modalCtrl.dismiss(this.station);
       }
-    }, error1 => {
-      this.stationSvrc.alertMsg(error1.message, 3500, 'top', 'danger');
+    }).catch((error1) => {
+      this.alertMsg(error1.message, 3500, 'top', 'danger');
       this.loadCtrl.dismiss();
     });
   }
@@ -80,11 +92,11 @@ export class StationaddPage implements OnInit {
     });
     await this.loaderToShow.present();
 
-    this.stationSvrc.updateStation(this.station).subscribe(response => {
+    this.nativeHttp.put(DataProviderService.updateStation, this.station, {}).then((response) => {
       this.loadCtrl.dismiss();
       this.modalCtrl.dismiss(this.station);
-    }, error1 => {
-      this.stationSvrc.alertMsg(error1.message, 3500, 'top', 'danger');
+    }).catch((error1) => {
+      this.alertMsg(error1.message, 3500, 'top', 'danger');
       this.loadCtrl.dismiss();
     });
   }

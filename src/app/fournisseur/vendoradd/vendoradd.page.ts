@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {LoadingController, ModalController, NavParams} from '@ionic/angular';
+import {LoadingController, ModalController, NavParams, ToastController} from '@ionic/angular';
 import {VendorService} from '../../../providers/vendor.service';
 import {DataProviderService} from '../../../providers/dataProvider.service';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @Component({
     selector: 'app-vendoradd',
@@ -14,14 +15,25 @@ export class VendoraddPage implements OnInit {
     isCreate = true;
     loaderToShow: any;
 
-    constructor(public navParams: NavParams, public modalCtrl: ModalController, public vendorSvrc: VendorService,
-                public loadCtrl: LoadingController) {
+    constructor(public navParams: NavParams, public modalCtrl: ModalController, public nativeHttp: HTTP,
+                public loadCtrl: LoadingController, public toastCtrl: ToastController) {
+        this.nativeHttp.setDataSerializer('json');
         // recuperation de l'utilisateur passé en paramettre
         this.fournisseur = navParams.get('vndr');
         // On indique si il s'agit de la mise a jour ou de la creation d'un utilisateur
         if (navParams.get('func') === 'update') {
             this.isCreate = false;
         }
+    }
+
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
     }
 
     ngOnInit() {
@@ -37,7 +49,7 @@ export class VendoraddPage implements OnInit {
      */
     submitRequest() {
         if (!DataProviderService.validateString(this.fournisseur.nom) || !DataProviderService.validateString(this.fournisseur.adresse)) {
-            this.vendorSvrc.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
+            this.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
         } else {
             if (this.isCreate) {
                 this.createVendor();
@@ -57,14 +69,18 @@ export class VendoraddPage implements OnInit {
         });
         await this.loaderToShow.present();
 
-        this.vendorSvrc.createVendor(this.fournisseur).subscribe(response => {
-            if (response) {
+        const header = {
+            'Content-Type': 'application/json'
+        };
+        this.nativeHttp.post(DataProviderService.createVendor, this.fournisseur, {}).then((response) => {
+            response.data = JSON.parse(response.data);
+            if(response.data){
                 this.loadCtrl.dismiss();
-                this.fournisseur = response;
+                this.fournisseur = response.data;
                 this.modalCtrl.dismiss(this.fournisseur);
             }
-        }, error1 => {
-            this.vendorSvrc.alertMsg(error1.message, 3500, 'top', 'danger');
+        }).catch((error1) => {
+            this.alertMsg(error1.error, 3500, 'top', 'danger');
             this.loadCtrl.dismiss();
         });
     }
@@ -79,11 +95,11 @@ export class VendoraddPage implements OnInit {
         });
         await this.loaderToShow.present();
 
-        this.vendorSvrc.updateVendor(this.fournisseur).subscribe(response => {
+        this.nativeHttp.put(DataProviderService.updateVendor, this.fournisseur, {}).then((response) => {
             this.loadCtrl.dismiss();
             this.modalCtrl.dismiss(this.fournisseur);
-        }, error1 => {
-            this.vendorSvrc.alertMsg(error1.message, 3500, 'top', 'danger');
+        }).catch((error1) => {
+            this.alertMsg(error1.error, 3500, 'top', 'danger');
             this.loadCtrl.dismiss();
         });
     }

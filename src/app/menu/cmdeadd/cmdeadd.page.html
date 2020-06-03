@@ -1,0 +1,160 @@
+<ion-header>
+    <ion-toolbar style="padding-bottom: 10px;">
+        <ion-buttons slot="start">
+            <ion-button color="light" slot="icon-only" style="margin-top: 1vh;" (click)="closeModal()">
+                <ion-icon name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title color="light" style="margin-top: 5px; font-size:4vw">Ajouter une Commande</ion-title>
+        <ion-buttons slot="end">
+            <ion-button color="light" slot="icon-only" (click)="saveCommande()" style="margin-top: 1vh;">
+                <ion-icon name="save"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+
+    <ion-list class="info-list">
+
+        <ion-item>
+            <ion-icon color="primary" name="calendar-outline" slot="start"></ion-icon>
+            <ion-label position="floating">date de la cmmande</ion-label>
+            <ion-datetime [(ngModel)]="commande.dateCommande" displayFormat="DDDD MMM D, YYYY" min="2005" max="2020"
+                          [value]="2008-09-02"></ion-datetime>
+        </ion-item>
+
+        <ion-item>
+            <ion-icon color="primary" name="cube" slot="start"></ion-icon>
+            <ion-label position="floating">Fournisseur</ion-label>
+            <ion-select interface="popover" [compareWith]="compareFn" [(ngModel)]="commande.fournisseur"
+                        [selectedText]="(commande.fournisseur!=null)? commande.fournisseur.nom: ''">
+                <ion-select-option *ngFor="let vndr of listeFournisseur" [value]="vndr">{{vndr.nom}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+    </ion-list>
+
+
+    <ion-item lines="none">
+        <ion-button fill="outline" mode="md" shape="round" color="primary" slot="start" (click)="showLcForm()">
+            <ion-icon name="cart" slot="end"></ion-icon>
+            + Ajouter un article
+        </ion-button>
+    </ion-item>
+
+    <div id="lc" class="product">
+        <ion-list class="info-list">
+
+            <ion-item>
+                <ion-icon color="primary" name="color-fill" slot="start"></ion-icon>
+                <ion-label position="floating">Type Carburant</ion-label>
+                <ion-select interface="popover" [compareWith]="compareFn2" (ionChange)="setPriceTypC($event)"
+                            [(ngModel)]="ligneCommande.typeCarburant"
+                            [selectedText]="(ligneCommande.typeCarburant!=null)? ligneCommande.typeCarburant.libelle : ''">
+                    <ion-select-option *ngFor="let typeCarb of listeTypCarburant"
+                                       [value]="typeCarb">{{typeCarb.libelle}}</ion-select-option>
+                </ion-select>
+            </ion-item>
+
+
+            <ion-item>
+                <ion-icon color="primary" name="timer" slot="start"></ion-icon>
+                <ion-label position="floating">Quantité (Volume)</ion-label>
+                <ion-input [(ngModel)]="ligneCommande.volume" inputmode="decimal" required="true"
+                           type="number"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-icon color="primary" name="cash" slot="start"></ion-icon>
+                <ion-label position="floating">Prix du litre (Fcfa)</ion-label>
+                <ion-input [(ngModel)]="ligneCommande.prixLitre" inputmode="decimal" required="true"
+                           readonly="true" type="number"></ion-input>
+            </ion-item>
+
+        </ion-list>
+
+        <ion-item lines="none">
+            <ion-button fill="outline" mode="md" shape="round" color="danger" slot="start" (click)="showLcForm()">
+                <ion-icon name="close" slot="end"></ion-icon>
+                Annuler
+            </ion-button>
+            <ion-button fill="outline" mode="md" shape="round" color="primary" slot="end" (click)="addCmdLigne()">
+                <ion-icon name="add" slot="end"></ion-icon>
+                Ajouter
+            </ion-button>
+        </ion-item>
+
+    </div>
+
+    <ion-list *ngIf="commande.listLigneCommandes.length > 0">
+        <ion-list-header style="font-size: 4.8vw">Liste des articles</ion-list-header>
+        <ion-item *ngFor="let item of commande.listLigneCommandes">
+            <ion-label>
+                <h3>{{item.libelle}}</h3>
+                <p>Volume: {{item.volume}} L </p>
+                <p>Prix Acht: {{item.prixLitre}} F cfa </p>
+                <ion-badge color="tertiary">Coût.T: {{item.volume * item.prixLitre | number:'1.1-2'}}Fcfa</ion-badge>
+            </ion-label>
+            <ion-buttons slot="end">
+                <ion-button color="tertiary" shape="round" mode="md" slot="icon-only" (click)="updateLigneCmd(item)">
+                    <ion-icon name="create"></ion-icon>
+                </ion-button>
+                <ion-button color="danger" shape="round" mode="md" slot="icon-only" (click)="removeLigneCmd(item)">
+                    <ion-icon name="trash"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+        </ion-item>
+    </ion-list>
+
+    <ion-list class="info-list" *ngIf="commande.listLigneCommandes.length > 0">
+
+        <ion-item>
+            <ion-icon color="primary" name="cash" size="small" slot="start"></ion-icon>
+            <ion-label position="floating" style="margin-bottom: 10%">Ristourne (%)- (Fcfa)</ion-label>
+            <ion-row>
+                <ion-col style="background: #086f811c;">
+                    <ion-input inputmode="decimal" [(ngModel)]="percent" (ionInput)="setRistournePercent($event)"
+                               required="true" min="0" max="100" type="number"></ion-input>
+                </ion-col>
+                <ion-col style="margin-left: 1vw; background: #007b6b4f">
+                    <ion-input [(ngModel)]="commande.ristourne" inputmode="decimal" min="0" [max]="commande.prixTotal"
+                               required="true"
+                               (ionInput)="setRistourneValue($event)" type="number"></ion-input>
+                </ion-col>
+            </ion-row>
+        </ion-item>
+
+        <ion-item>
+            <ion-icon color="primary" name="cash" slot="start"></ion-icon>
+            <ion-label position="floating">Prix du Total</ion-label>
+            <ion-input [(ngModel)]="commande.prixTotal-commande.ristourne" readonly="true" min="0" inputmode="decimal"
+                       required="true"
+                       type="number"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-icon color="primary" name="timer" slot="start"></ion-icon>
+            <ion-label position="floating">Etat de la cammande</ion-label>
+            <ion-select interface="popover" [(ngModel)]="commande.statut">
+                <ion-select-option value="enregistrer">enregistrer</ion-select-option>
+                <ion-select-option value="commander">commander</ion-select-option>
+                <ion-select-option value="livrer">livrer</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item lines="none">
+            <ion-icon color="primary" name="wallet" slot="start"></ion-icon>
+            <ion-label>Soldé ?</ion-label>
+            <ion-checkbox slot="end"></ion-checkbox>
+        </ion-item>
+
+    </ion-list>
+
+    <div id="lcovr" class="not_displ"></div>
+
+</ion-content>
+
+

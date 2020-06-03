@@ -9,6 +9,7 @@ import {MenuPageRoutingModule} from './menu-routing.module';
 import {MenuPage} from './menu.page';
 import {ReservoiraddPageModule} from '../reservoiradd/reservoiradd.module';
 import {FournisseurPageModule} from '../../menu/fournisseur/fournisseur.module';
+import {CmdeaddPageModule} from '../../menu/cmdeadd/cmdeadd.module';
 
 @NgModule({
     imports: [
@@ -17,7 +18,8 @@ import {FournisseurPageModule} from '../../menu/fournisseur/fournisseur.module';
         IonicModule,
         MenuPageRoutingModule,
         ReservoiraddPageModule,
-        FournisseurPageModule
+        FournisseurPageModule,
+        CmdeaddPageModule
     ],
     declarations: [MenuPage]
 })

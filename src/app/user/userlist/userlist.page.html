@@ -7,9 +7,11 @@
         <ion-title color="light" style="margin-top: 5px; font-size:4vw">Liste des Actionnaires</ion-title>
     </ion-toolbar>
 </ion-header>
+<ion-toolbar>
+    <ion-searchbar class="mySearchbar" (ionInput)="filterList($event)" mode="ios"></ion-searchbar>
+</ion-toolbar>
 
 <ion-content>
-    <ion-searchbar (ionInput)="filterList($event)" mode="ios" style="margin: 0.5%;"></ion-searchbar>
 
 
     <ion-list-header mode="ios" style="padding-bottom: 7%;">Actionnaires</ion-list-header>

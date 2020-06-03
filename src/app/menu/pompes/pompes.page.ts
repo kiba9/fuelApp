@@ -1,8 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ModalController, ToastController} from '@ionic/angular';
+import {ModalController, PopoverController, ToastController} from '@ionic/angular';
 import {IndexaddPage} from '../indexadd/indexadd.page';
 import {IndexCarburant} from '../../../models/indexCarburant';
-import {IndexCarburantService} from '../../../providers/indexCarburantService';
+import {HTTP} from '@ionic-native/http/ngx';
+import {DataProviderService} from '../../../providers/dataProvider.service';
+import {Router} from '@angular/router';
+import {SettingsComponent} from '../../components/settings/settings.component';
 
 @Component({
     selector: 'app-pompes',
@@ -11,23 +14,36 @@ import {IndexCarburantService} from '../../../providers/indexCarburantService';
 })
 export class PompesPage implements OnInit {
 
-    segmentModel = 'SRXZ00';
+    segmentModel;
     dataList = [];
     listePompes = [];
     isDelete = false;
+    station;
     index: IndexCarburant = new IndexCarburant();
 
-    constructor(public modalCtrl: ModalController, public toastCtrl: ToastController, public indxSvrc: IndexCarburantService) {
+    constructor(public router: Router, public modalCtrl: ModalController, public toastCtrl: ToastController,
+                public nativeHttp: HTTP, public popoverCtrl: PopoverController) {
+        if (router.getCurrentNavigation().extras.state) {
+            this.station = this.router.getCurrentNavigation().extras.state.item;
+        }
+    }
+
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
     }
 
     ngOnInit() {
-        this.getIndexList();
         this.getListPompes();
     }
 
     segmentChanged() {
-        // this.getData();
-        this.getIndexList();
+        this.getIndexList(this.getCurrentSegment());
     }
 
     doRefresh(event) {
@@ -43,43 +59,28 @@ export class PompesPage implements OnInit {
      * recupere la liste des pompes de cette station en BD
      */
     getListPompes() {
-        for (let i = 0; i < 4; i++) {
-            const item: any = {
-                libelle: 'pompe ' + this.listePompes.length,
-                code: 'SRXZ0' + this.listePompes.length
-            };
-            this.listePompes.push(item);
-        }
-        // this.getData();
-    }
-
-    getIndexList() {
-        this.dataList = [];
-        this.indxSvrc.getAllIndexCarburant().subscribe(value => {
-            console.log(value);
-            this.dataList = value;
-            this.indxSvrc = value;
-        }, async error1 => {
-            console.log(error1);
-            this.dataList = [];
-            this.indxSvrc.alertMsg(error1.message, 4000, 'middle', 'warning');
+        this.nativeHttp.get(DataProviderService.getPompesOfStation + this.station.idStation, {}, {}).then((response) => {
+            response.data = JSON.parse(response.data);
+            console.log(response.data);
+            this.listePompes = response.data;
+            this.segmentModel = response.data[0].code;
+            this.getIndexList(this.getCurrentSegment());
+        }).catch((error1) => {
+            this.listePompes = [];
+            if(error1.error) this.alertMsg(error1.error, 3500, 'middle', 'warning');
+            else this.alertMsg('Erreur Serveur: Impossible de recuperer les données.', 3500, 'top', 'warning');
         });
     }
 
-    async getData(): Promise<void> {
-        this.dataList = [];
-        setTimeout(() => {
-            const cpt = (this.segmentModel === this.listePompes[0].code) ? 3 : (this.segmentModel === this.listePompes[1].code) ? 5 : 10;
-            for (let i = 0; i < cpt; i++) {
-                const item: any = {
-                    description: 'Item number ',
-                    numero: this.dataList.length,
-                    volumeVendu: 48460,
-                    ancienIndex: 34527,
-                };
-                this.dataList.push(item);
-            }
-        }, 2000);
+    getIndexList(idPmp) {
+        this.dataList = null;
+        this.nativeHttp.get(DataProviderService.getIndexOfPompe + idPmp, {}, {}).then((response) => {
+            response.data = JSON.parse(response.data);
+            this.dataList = response.data;
+        }).catch((error1) => {
+            this.dataList = [];
+            this.alertMsg(error1.error, 4000, 'middle', 'warning');
+        });
     }
 
     /**
@@ -91,6 +92,7 @@ export class PompesPage implements OnInit {
             component: IndexaddPage,
             componentProps: {
                 indexItem: new IndexCarburant(),
+                idStation: this.station.idStation,
                 attachElmnt: 'pompe',
                 func: 'create'
             }
@@ -98,8 +100,30 @@ export class PompesPage implements OnInit {
 
         modal.onDidDismiss().then((response) => {
             if (response.data) {
-                this.getData();
-                this.indxSvrc.alertMsg('Index crée avec succeès', 2000, 'top', 'success');
+                this.getIndexList(this.getCurrentSegment());
+                this.alertMsg('Index crée avec succeès', 2000, 'top', 'success');
+            }
+        });
+
+        await modal.present();
+    }
+
+    async deleteIndexCarburant(itemCarb: any) {
+        const modal = await this.modalCtrl.create({
+            animated: true,
+            component: IndexaddPage,
+            componentProps: {
+                indexItem: itemCarb,
+                idStation: this.station.idStation,
+                attachElmnt: 'pompe',
+                func: 'update'
+            }
+        });
+
+        modal.onDidDismiss().then((response) => {
+            if (response.data) {
+                this.getIndexList(this.getCurrentSegment());
+                this.alertMsg('Index modifié avec succeès', 2000, 'top', 'success');
             }
         });
 
@@ -139,14 +163,22 @@ export class PompesPage implements OnInit {
             // une fois le delai de 5 sec passé, si la demande de suppression est effective on supprime alors en BD
             response.onWillDismiss().then((res) => {
                 if (this.isDelete) {
-                    this.indxSvrc.deleteIndexCarburant(indxPmp.idIndex).subscribe(value => {
-                        this.indxSvrc.alertMsg('Utilisateur Supprimé avec succès', 2000, 'top', 'success');
-                    }, error1 => {
-                        this.indxSvrc.alertMsg(error1.message, 4000, 'bottom', 'danger');
+                    this.nativeHttp.delete(DataProviderService.deleteIndexCarburant + indxPmp.idIndex, {}, {}).then((response) => {
+                        this.alertMsg('index Supprimé avec succès', 2000, 'top', 'success');
+                    }).catch((error1) => {
+                        this.alertMsg(error1.error, 4000, 'bottom', 'danger');
                     });
                 }
             });
         });
+    }
+
+    getCurrentSegment() : number {
+        for(let itPmp of this.listePompes){
+            if(this.segmentModel === itPmp.code){
+                return itPmp.idPompe;
+            }
+        }
     }
 
 }

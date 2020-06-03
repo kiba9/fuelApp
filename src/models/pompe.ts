@@ -1,7 +1,7 @@
 export class Pompe {
     idPompe?: number;
     code: number;
-    libelle: string;
+    libelle: '';
     listindex: any[];
     stationservice?: any;
 

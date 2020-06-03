@@ -7,13 +7,16 @@
     <ion-title color="light" style="margin-top: 5px; font-size:4vw">Liste des Stations</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-toolbar>
+  <ion-searchbar class="mySearchbar" (ionInput)="filterList($event)" mode="ios"></ion-searchbar>
+</ion-toolbar>
 
 <ion-content>
 
   <ion-list *ngIf="stationList">
-    <ion-card mode="ios" *ngFor="let itemstion of stationList; let i = index" [class]="stationCss[(i%3)]" (click)="showDetail(itemstion)">
+    <ion-card mode="ios" *ngFor="let itemstion of stationFilterList; let i = index" (click)="showDetail(itemstion)">
       <ion-ripple-effect></ion-ripple-effect>
-      <ion-item class="stion_colr1" lines="none">
+      <ion-item class="stion_colr2" lines="none">
         <ion-card-header>
           <ion-card-title>{{itemstion.nom}}</ion-card-title>
         </ion-card-header>

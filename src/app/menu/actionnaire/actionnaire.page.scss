@@ -1,0 +1,49 @@
+ion-toolbar {
+  --background: linear-gradient(-45deg, #0060bb -30%, #15a08d 70%);
+  border: none;
+}
+
+.info-list {
+  margin: 5%;
+  font-style: normal;
+
+}
+
+.btn_connexion {
+  --padding-top: 8%;
+  --padding-bottom: 8%;
+  font-size: 4.5vw;
+  margin: 4%;
+  margin-top: 17%;
+  --background: #E48F38;
+  color: white;
+  --border-radius: 0;
+  --box-shadow: 0;
+  font-family: montserrat, sans-serif;
+  z-index: 1;
+  text-transform: capitalize;
+}
+
+.offer_opt {
+  margin-top: 5%;
+}
+
+.post {
+  position: relative;
+  margin: 0 auto;
+  padding: 3%;
+  width: 90%;
+  background: #FFFFFF;
+  border-radius: 5px;
+  box-shadow: 0 2px 20px #1a1b1e1f;
+
+}
+
+ion-searchbar{
+  --icon-color: #6e6e6e;
+  --color: #6e6e6e;
+  --placeholder-color: #c8c8c8;
+  --placeholder-font-style:italic;
+  --background:white
+
+}

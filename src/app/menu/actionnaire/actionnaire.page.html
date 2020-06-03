@@ -1,9 +1,73 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>actionnaire</ion-title>
-  </ion-toolbar>
+    <ion-toolbar style="padding-bottom: 10px;">
+        <ion-buttons slot="start">
+            <ion-button color="light" (click)="closeWindow()" style="margin-top: 1vh;">
+                <ion-icon name="chevron-back"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title color="light" style="margin-top: 5px; font-size:4vw">Liste des Actionnaires</ion-title>
+        <ion-buttons slot="end">
+            <ion-button color="light" slot="icon-only" mode="md" style="margin-top: 1vh;" [disabled]="!isAdd" (click)="saveActionnaire()">
+                <ion-icon name="save"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar>
+        <ion-searchbar [(ngModel)]="searchbar" (ionInput)="filterList($event)" mode="ios" style="margin: 0.5%;"></ion-searchbar>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
+    <div class="offer_opt post" *ngIf="searchbar">
+
+        <ion-list *ngIf="userfilterList.length > 0; else skeleton" style="width: 95%; height: 250px; overflow-y: scroll">
+
+                <ion-item *ngFor="let item of userfilterList" class="item-remove-animate item" button="true"
+                          [disabled]="isAlsoAdd(item)"
+                          (click)="seletedUser(item)" detail="false" mode="ios">
+                    <ion-avatar slot="start"><img alt="" src="../../../assets/images/avatar.svg"></ion-avatar>
+                    <ion-label>
+                        <h3>{{item.nom + ' ' + item.prenom}}</h3>
+                        <p>{{item.nationalite}}</p>
+                    </ion-label>
+                    <ion-badge color="tertiary" slot="end">{{item.partAction}}</ion-badge>
+                </ion-item>
+
+        </ion-list>
+
+        <ng-template #skeleton>
+            <p class="ion-text-center">Aucun resultat</p>
+        </ng-template>
+
+    </div>
+
+    <ion-list-header mode="ios" style="padding-bottom: 7%;">Actionnaires</ion-list-header>
+    <ion-list *ngIf="station.listeUtilisateurs.length > 0; else skeleton2">
+        <ion-item-sliding *ngFor="let usr of station.listeUtilisateurs">
+            <ion-item-options side="start">
+                <ion-item-option (click)="removeInvestor(usr)" color="danger">
+                    Delete
+                    <ion-icon name="trash" slot="start"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+
+            <ion-item class="item-remove-animate item" detail="false" mode="ios">
+                <ion-avatar slot="start"><img alt="" src="../../../assets/images/avatar.svg"></ion-avatar>
+                <ion-label>
+                    <h3>{{usr.nom + ' ' + usr.prenom}}</h3>
+                    <p>{{usr.nationalite}}</p>
+                </ion-label>
+                <ion-badge color="tertiary" slot="end">{{usr.partAction}}</ion-badge>
+            </ion-item>
+
+        </ion-item-sliding>
+
+    </ion-list>
+
+    <ng-template #skeleton2>
+        <p class="ion-text-center ion-align-items-center">Aucun actionnaire</p>
+    </ng-template>
+
 
 </ion-content>

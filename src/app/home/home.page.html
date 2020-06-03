@@ -8,7 +8,7 @@
   </div>
 
   <div class="connexion">
-    <ion-label class="ion-padding label">Username or Email</ion-label>
+    <ion-label class="ion-padding label">Login Utilisateur</ion-label>
     <ion-input [(ngModel)]="loginUser" class="input_login" inputmode="text" placeholder="Ex: 69090" required="true"
                type="text"></ion-input>
 
@@ -16,8 +16,9 @@
     <ion-input [(ngModel)]="password" class="input_login" inputmode="text" placeholder="password" required="true"
                type="password"></ion-input>
 
-    <div linespace></div>
-    <ion-button (click)="submitRequest()" class="btn_connexion" expand="block" mode="md">Connexion</ion-button>
-
+    <div class="linespace"></div>
+    <ion-button (click)="submitRequest()" type="submit" class="btn_connexion" expand="block"
+                [disabled]="!(loginUser && password)" mode="md">Connexion</ion-button>
   </div>
+
 </ion-content>

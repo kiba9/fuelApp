@@ -4,6 +4,8 @@ import {Router} from '@angular/router';
 import {UserService} from '../../../providers/user.service';
 import {UseraddPage} from '../useradd/useradd.page';
 import {Utilisateur} from '../../../models/Utilisateur';
+import {HTTP} from '@ionic-native/http/ngx';
+import {DataProviderService} from '../../../providers/dataProvider.service';
 
 @Component({
     selector: 'app-userlist',
@@ -17,8 +19,18 @@ export class UserlistPage implements OnInit {
     isDelete = false;
     utilisateur: Utilisateur = new Utilisateur();
 
-    constructor(private router: Router, private userSrvc: UserService, private modalCtrl: ModalController,
+    constructor(private router: Router, public nativeHttp: HTTP, private modalCtrl: ModalController,
                 private toastCtrl: ToastController) {
+    }
+
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
     }
 
     ngOnInit() {
@@ -30,13 +42,12 @@ export class UserlistPage implements OnInit {
      */
     getUserList() {
         this.userlist = this.userfilterList = null;
-        this.userSrvc.getAllUser().subscribe(value => {
-            console.log(value);
-            this.userlist = this.userfilterList = value;
-        }, async error1 => {
-            console.log(error1);
+        this.nativeHttp.get(DataProviderService.getAllUser, {}, {}).then((response) => {
+           response.data = JSON.parse(response.data);
+            this.userlist = this.userfilterList = response.data;
+        }).catch((error1) => {
             this.userlist = this.userfilterList = [];
-            this.userSrvc.alertMsg(error1.message, 4000, 'middle', 'warning');
+            this.alertMsg(error1.error, 4000, 'middle', 'warning');
         });
     }
 
@@ -70,7 +81,7 @@ export class UserlistPage implements OnInit {
             animated: true,
             component: UseraddPage,
             componentProps: {
-                user: this.utilisateur,
+                user: new Utilisateur(),
                 func: 'create'
             }
         });
@@ -78,7 +89,7 @@ export class UserlistPage implements OnInit {
         modal.onDidDismiss().then((response) => {
             if (response.data) {
                 this.userlist.push(response.data);
-                this.userSrvc.alertMsg('Utilisateur crée avec succeès', 2000, 'top', 'success');
+                this.alertMsg('Utilisateur crée avec succeès', 2000, 'top', 'success');
             }
         });
 
@@ -117,10 +128,10 @@ export class UserlistPage implements OnInit {
             // une fois le delai de 5 sec passé, si la demande de suppression est effective on supprime alors en BD
             response.onWillDismiss().then((res) => {
                 if (this.isDelete) {
-                    this.userSrvc.deleteUser(usr.idUtilisateur).subscribe(value => {
-                        this.userSrvc.alertMsg('Utilisateur Supprimé avec succès', 2000, 'top', 'success');
-                    }, error1 => {
-                        this.userSrvc.alertMsg(error1.message, 4000, 'bottom', 'danger');
+                    this.nativeHttp.delete(DataProviderService.deleteUser + usr.idUtilisateur + '/', {}, {}).then((response) => {
+                        this.alertMsg('Utilisateur Supprimé avec succès', 2000, 'top', 'success');
+                    }).catch((error1) => {
+                        this.alertMsg(error1.message, 4000, 'bottom', 'danger');
                     });
                 }
             });
@@ -146,7 +157,7 @@ export class UserlistPage implements OnInit {
                 const pos: number = this.userlist.indexOf(usr);
                 this.userlist.splice(pos, 1);
                 this.userlist.splice(pos, 0, response.data);
-                this.userSrvc.alertMsg('Utilisateur Modifié avec succeès', 2000, 'top', 'success');
+                this.alertMsg('Utilisateur Modifié avec succeès', 2000, 'top', 'success');
             }
         });
 

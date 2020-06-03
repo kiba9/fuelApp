@@ -7,11 +7,14 @@
         <ion-title color="light" style="margin-top: 5px; font-size:4vw">Type de Carburant</ion-title>
     </ion-toolbar>
 </ion-header>
+<ion-toolbar>
+    <ion-searchbar class="mySearchbar" (ionInput)="filterList($event)" mode="ios"></ion-searchbar>
+</ion-toolbar>
 
 <ion-content [fullscreen]="true">
 
     <ion-list *ngIf="fuelList; else skeleton">
-        <ion-card *ngFor="let typecarb of fuelList" class="ion-activatable" mode="ios">
+        <ion-card *ngFor="let typecarb of fuelFilterList" class="ion-activatable" mode="ios">
             <ion-ripple-effect></ion-ripple-effect>
             <ion-item class="stion_colr1" lines="none">
                 <ion-card-header>

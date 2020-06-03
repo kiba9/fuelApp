@@ -33,18 +33,20 @@
     <ion-item [disabled]="!isPompe">
       <ion-icon color="primary" name="color-fill" slot="start"></ion-icon>
       <ion-label position="floating">Pompe</ion-label>
-      <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="pompe">
+      <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="pompe" [compareWith]="compareFn"
+                  [selectedText]="(pompe!=null)? (pompe.libelle + '-' + pompe.code) : ''">
         <ion-select-option *ngFor=" let pmp of listPompeStation"
-                           [value]="pmp">{{pmp.nom}}</ion-select-option>
+                           [value]="pmp">{{pmp.libelle}}-{{pmp.code}}</ion-select-option>
       </ion-select>
     </ion-item>
 
     <ion-item [disabled]="isPompe">
       <ion-icon color="primary" name="beaker" slot="start"></ion-icon>
       <ion-label position="floating">Reservoir</ion-label>
-      <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="reservoir">
+      <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="reservoir" [compareWith]="compareFn2"
+                  [selectedText]="(reservoir!=null)? reservoir.libelle : ''">
         <ion-select-option *ngFor=" let rsvoir of listReservoirStation"
-                           [value]="rsvoir">{{rsvoir.nom}}</ion-select-option>
+                           [value]="rsvoir">{{rsvoir.libelle}}</ion-select-option>
       </ion-select>
     </ion-item>
 

@@ -30,6 +30,15 @@
             <ion-input [(ngModel)]="fuel.prixVente" inputmode="decimal" required="true" type="number"></ion-input>
         </ion-item>
 
+        <ion-item>
+            <ion-icon color="primary" name="cube" slot="start"></ion-icon>
+            <ion-label position="floating">Fournisseur</ion-label>
+            <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="fuel.fournisseur" [compareWith]="compareFn"
+                        [selectedText]="(fuel.fournisseur!= null)? fuel.fournisseur.nom : '' ">
+                <ion-select-option *ngFor=" let vndr of listFournisseur" [value]="vndr">{{vndr.nom}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+
     </ion-list>
 
     <ion-button (click)="submitRequest()" class="btn_connexion" expand="block" mode="md">Enregistrer</ion-button>

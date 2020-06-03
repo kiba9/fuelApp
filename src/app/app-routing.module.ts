@@ -51,6 +51,14 @@ const routes: Routes = [
     path: 'station/menu/commande',
     loadChildren: () => import('./menu/commande/commande.module').then( m => m.CommandePageModule)
   },
+  {
+    path: 'cmdeadd',
+    loadChildren: () => import('./menu/cmdeadd/cmdeadd.module').then( m => m.CmdeaddPageModule)
+  },
+  {
+    path: 'actionadd',
+    loadChildren: () => import('./menu/actionadd/actionadd.module').then( m => m.ActionaddPageModule)
+  },
 ];
 
 @NgModule({

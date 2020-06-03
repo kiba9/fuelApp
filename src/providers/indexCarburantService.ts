@@ -34,6 +34,6 @@ export class IndexCarburantService {
     }
 
     alertMsg(msg, dur, pos, colr) {
-        this.provider.showToast(msg, dur, pos, colr);
+        this.provider.alertMsg(msg, dur, pos, colr);
     }
 }

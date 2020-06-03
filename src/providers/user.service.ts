@@ -9,7 +9,7 @@ import {Observable} from 'rxjs';
 
 export class UserService {
 
-    endPoint = 'api/utilisateur/';
+    public endPoint = 'api/utilisateur/';
 
     constructor(private provider: DataProviderService) {
     }
@@ -41,7 +41,7 @@ export class UserService {
     }
 
     alertMsg(msg, dur, pos, colr) {
-        this.provider.showToast(msg, dur, pos, colr);
+        this.provider.alertMsg(msg, dur, pos, colr);
     }
 
 }

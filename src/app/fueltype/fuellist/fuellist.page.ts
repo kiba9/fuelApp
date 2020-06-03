@@ -4,6 +4,8 @@ import {ModalController, PopoverController, ToastController} from '@ionic/angula
 import {FuelService} from '../../../providers/fuel.service';
 import {FueltypeaddPage} from '../fueltypeadd/fueltypeadd.page';
 import {SettingsComponent} from '../../components/settings/settings.component';
+import {HTTP} from '@ionic-native/http/ngx';
+import {DataProviderService} from '../../../providers/dataProvider.service';
 
 @Component({
     selector: 'app-fuellist',
@@ -13,11 +15,22 @@ import {SettingsComponent} from '../../components/settings/settings.component';
 export class FuellistPage implements OnInit {
 
     fuelList = [];
+    fuelFilterList = [];
     isDelete = false;
     fuel: Fuel = new Fuel();
 
-    constructor(public modalCtrl: ModalController, public fuelSvrc: FuelService, public toastCtrl: ToastController,
+    constructor(public modalCtrl: ModalController, public toastCtrl: ToastController, public nativeHttp: HTTP,
                 public popoverCtrl: PopoverController) {
+    }
+
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
     }
 
     ngOnInit() {
@@ -29,13 +42,13 @@ export class FuellistPage implements OnInit {
      */
     getFuelTypes() {
         this.fuelList = null;
-        this.fuelSvrc.getAllFuelTypes().subscribe(value => {
-            console.log(value);
-            this.fuelList = value;
-        }, async error1 => {
-            console.log(error1);
+        this.nativeHttp.get(DataProviderService.getAllFuelTypes, {}, {}).then((response) => {
+            response.data = JSON.parse(response.data);
+            console.log(response.data);
+            this.fuelList = this.fuelFilterList = response.data;
+        }).catch((error1) => {
             this.fuelList = [];
-            this.fuelSvrc.alertMsg(error1.message, 4000, 'middle', 'warning');
+            this.alertMsg(error1.error, 4000, 'middle', 'warning');
         });
     }
 
@@ -48,7 +61,7 @@ export class FuellistPage implements OnInit {
             animated: true,
             component: FueltypeaddPage,
             componentProps: {
-                fueltype: this.fuel,
+                fueltype: new Fuel(),
                 func: 'create'
             }
         });
@@ -56,7 +69,7 @@ export class FuellistPage implements OnInit {
         modal.onDidDismiss().then((response) => {
             if (response.data) {
                 this.fuelList.push(response.data);
-                this.fuelSvrc.alertMsg('Type Carburant crée avec succeès', 2000, 'top', 'success');
+                this.alertMsg('Type Carburant crée avec succeès', 2000, 'top', 'success');
             }
         });
 
@@ -95,10 +108,10 @@ export class FuellistPage implements OnInit {
             // une fois le delai de 5 sec passé, si la demande de suppression est effective on supprime alors en BD
             response.onWillDismiss().then((res) => {
                 if (this.isDelete) {
-                    this.fuelSvrc.deleteFuelType(fueltyp.idTypeCarburant).subscribe(value => {
-                        this.fuelSvrc.alertMsg('Fournisseur Supprimé avec succès', 2000, 'top', 'success');
-                    }, error1 => {
-                        this.fuelSvrc.alertMsg(error1.message, 4000, 'bottom', 'danger');
+                    this.nativeHttp.delete(DataProviderService.deleteFuelType + fueltyp.idTypeCarburant +'/', {}, {}).then((response) => {
+                        this.alertMsg('Fournisseur Supprimé avec succès', 2000, 'top', 'success');
+                    }).catch((error1) => {
+                        this.alertMsg(error1.error, 4000, 'bottom', 'danger');
                         this.isDelete = false;
                         this.fuelList.splice(index, 0, fueltyp);
                     });
@@ -126,7 +139,7 @@ export class FuellistPage implements OnInit {
                 const pos: number = this.fuelList.indexOf(fueltyp);
                 this.fuelList.splice(pos, 1);
                 this.fuelList.splice(pos, 0, response.data);
-                this.fuelSvrc.alertMsg('Fournisseur Modifié avec succeès', 2000, 'top', 'success');
+                this.alertMsg('Fournisseur Modifié avec succeès', 2000, 'top', 'success');
             }
         });
 
@@ -156,6 +169,22 @@ export class FuellistPage implements OnInit {
         });
 
         return await popover.present();
+    }
+
+    filterList(event) {
+        this.fuelFilterList = this.fuelList;
+        const searchTerm = event.target.value;
+
+        if (!searchTerm) {
+            return;
+        }
+
+        // On fait un trie en fonction des nom ou des prenom commençant par la lettre saisie
+        this.fuelFilterList = this.fuelFilterList.filter(fuel => {
+            if (fuel.libelle.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
+                return true;
+            }
+        });
     }
 
 }

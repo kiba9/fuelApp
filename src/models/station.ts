@@ -2,7 +2,7 @@ export class Station {
     idStation?: number;
     nom: '';
     adresse: '';
-    listeActionnaires?: any[];
+    listeUtilisateurs?: any[];
     fournisseur?: any;
     Pompe?: any[];
     commande?: any[];

@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {LoadingController, ModalController, NavParams} from '@ionic/angular';
-import {ReservoirService} from '../../../providers/reservoir.service';
+import {LoadingController, ModalController, NavParams, ToastController} from '@ionic/angular';
 import {DataProviderService} from '../../../providers/dataProvider.service';
-import {FuelService} from '../../../providers/fuel.service';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @Component({
     selector: 'app-reservoiradd',
@@ -23,8 +22,9 @@ export class ReservoiraddPage implements OnInit {
     typeCarburant: any = null;
     listFuelType = [];
 
-    constructor(public navParams: NavParams, public modalCtrl: ModalController, public rsvorSvrc: ReservoirService,
-                public loadCtrl: LoadingController, public fuelSvrc: FuelService) {
+    constructor(public navParams: NavParams, public modalCtrl: ModalController, public nativeHttp: HTTP,
+                public loadCtrl: LoadingController, public toastCtrl: ToastController) {
+        this.nativeHttp.setDataSerializer('json');
         // recuperation du type de carburant passé en paramettre
         this.reservoir = navParams.get('reservoirItem');
         // On indique si il s'agit de la mise a jour ou de la creation d'un utilisateur
@@ -33,10 +33,20 @@ export class ReservoiraddPage implements OnInit {
         }
     }
 
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
+    }
+
     submitRequest() {
         if (!DataProviderService.validateString(this.reservoir.libelle) || this.reservoir.volumeReservoir === null
             || this.reservoir.volumeReservoir < 0 || this.reservoir.typeCarburant === null) {
-            this.rsvorSvrc.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
+            this.alertMsg('Remplissez entierement le formulaire', 2000, 'top', 'danger');
         } else {
             if (this.isCreate) {
                 this.createReservoir();
@@ -64,14 +74,15 @@ export class ReservoiraddPage implements OnInit {
         });
         await this.loaderToShow.present();
 
-        this.rsvorSvrc.createReservoir(this.reservoir).subscribe(response => {
-            if (response) {
+        this.nativeHttp.post(DataProviderService.createReservoir, this.reservoir, {}).then((response) => {
+            response.data = JSON.parse(response.data);
+            if(response.data){
                 this.loadCtrl.dismiss();
-                this.reservoir = response;
+                this.reservoir = response.data;
                 this.modalCtrl.dismiss(this.reservoir);
             }
-        }, error1 => {
-            this.rsvorSvrc.alertMsg(error1.message, 3500, 'top', 'danger');
+        }, (error1) => {
+            this.alertMsg(error1.message, 3500, 'top', 'danger');
             this.loadCtrl.dismiss();
         });
     }
@@ -86,18 +97,20 @@ export class ReservoiraddPage implements OnInit {
         });
         await this.loaderToShow.present();
 
-        this.rsvorSvrc.updateReservoir(this.reservoir).subscribe(response => {
+        this.nativeHttp.put(DataProviderService.updateReservoir, this.reservoir, {}).then((response) => {
             this.loadCtrl.dismiss();
             this.modalCtrl.dismiss(this.reservoir);
-        }, error1 => {
-            this.rsvorSvrc.alertMsg(error1.message, 3500, 'top', 'danger');
+        }, (error1) => {
+            this.alertMsg(error1.error, 3500, 'top', 'danger');
             this.loadCtrl.dismiss();
         });
     }
 
     getTypeFuel() {
-        this.fuelSvrc.getAllFuelTypes().subscribe(response =>  {
-            this.listFuelType = response;
+        this.nativeHttp.get(DataProviderService.getAllFuelTypes, {}, {}).then((response) => {
+            this.listFuelType = JSON.parse(response.data);
+        }).catch((error1) => {
+            this.listFuelType = [];
         });
     }
 

@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {UserService} from '../../providers/user.service';
-import {LoadingController} from '@ionic/angular';
+import {LoadingController, ToastController} from '@ionic/angular';
 import {DataProviderService} from '../../providers/dataProvider.service';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @Component({
     selector: 'app-home',
@@ -15,7 +16,18 @@ export class HomePage {
     password: string;
     loaderToShow: any;
 
-    constructor(private router: Router, private userSrvc: UserService, public loadCtrl: LoadingController) {
+    constructor(private router: Router, private userSrvc: UserService, public loadCtrl: LoadingController,
+                public nativeHttp: HTTP, public toastCtrl: ToastController) {
+    }
+
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
     }
 
     /**
@@ -23,7 +35,7 @@ export class HomePage {
      */
     submitRequest() {
         if (!DataProviderService.validateString(this.loginUser) || !DataProviderService.validateString(this.password)) {
-            this.userSrvc.alertMsg('nom utilisateur ou mot de passe non valide', 2000, 'top', 'danger');
+            this.alertMsg('nom utilisateur ou mot de passe non valide', 2000, 'top', 'danger');
         } else {
             this.connexion();
         }
@@ -39,18 +51,19 @@ export class HomePage {
         });
         await this.loaderToShow.present();
 
-        this.userSrvc.login(this.loginUser, this.password).subscribe(response => {
+        this.nativeHttp.get(DataProviderService.loginUser + this.loginUser + '/' + this.password + '/',
+            {}, {}).then((response) => {
             this.loadCtrl.dismiss();
-            if (response) {
-                this.router.navigate(['dashbord']);
-                this.userSrvc.alertMsg(`Bienvenu ${response.nom}`, 2000, 'top', 'success');
-            } else {
-                this.userSrvc.alertMsg('Mot de passe ou login incorrect', 3000, 'top', 'danger');
-            }
-        }, error1 => {
-            this.userSrvc.alertMsg(error1.message, 3500, 'top', 'danger');
+            response.data = JSON.parse(response.data);
+            this.router.navigate(['dashbord']);
+            this.router.dispose();
+            this.alertMsg(`Bienvenu ${response.data.nom}` , 2000, 'top', 'success')
+        }).catch((error) => {
+            console.log(error);
+            if(error.error) this.alertMsg(error.error, 3500, 'top', 'danger');
+            else this.alertMsg('Login ou mot de passe incorrect', 3500, 'top', 'danger');
+
             this.loadCtrl.dismiss();
         });
     }
-
 }

@@ -4,7 +4,7 @@
             <ion-back-button color="light" defaultHref="/" icon="chevron-back" style="margin-top: 1vh;">
             </ion-back-button>
         </ion-buttons>
-        <ion-title color="light" style="margin-top: 5px; font-size:4vw">Liste des Pompes</ion-title>
+        <ion-title color="light" style="margin-top: 5px; font-size:4vw">Index des Pompes</ion-title>
         <ion-buttons slot="end">
         <ion-button color="light" slot="icon-only" (click)="createIndexCarburant()" style="margin-top: 1vh;">
             <ion-icon name="add-circle"></ion-icon>
@@ -50,7 +50,7 @@
         </ion-list>
     </ng-template>
 
-    <ion-list style="margin-top: 10%" *ngIf="dataList.length > 0 else skeleton">
+    <ion-list style="margin-top: 10%" *ngIf="dataList else skeleton">
 
         <ion-item-sliding *ngFor="let item of dataList">
             <ion-item-options side="start">
@@ -72,7 +72,7 @@
 
 
             <ion-item-options side="end">
-                <ion-item-option (click)="updatePompe(item)" color="tertiary">
+                <ion-item-option (click)="deleteIndexCarburant(item)" color="tertiary">
                     Modifier
                     <ion-icon name="create" slot="end"></ion-icon>
                 </ion-item-option>

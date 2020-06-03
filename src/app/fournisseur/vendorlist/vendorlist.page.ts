@@ -4,6 +4,8 @@ import {ModalController, ToastController} from '@ionic/angular';
 import {VendoraddPage} from '../vendoradd/vendoradd.page';
 import {Vendor} from '../../../models/vendor';
 import {UseraddPage} from '../../user/useradd/useradd.page';
+import {HTTP} from '@ionic-native/http/ngx';
+import {DataProviderService} from '../../../providers/dataProvider.service';
 
 @Component({
     selector: 'app-vendorlist',
@@ -17,7 +19,17 @@ export class VendorlistPage implements OnInit {
     isDelete = false;
     fournisseur: Vendor = new Vendor();
 
-    constructor(public vendorSvrc: VendorService, public toastCtrl: ToastController, public modalCtrl: ModalController) {
+    constructor(public toastCtrl: ToastController, public modalCtrl: ModalController, public nativeHttp: HTTP) {
+    }
+
+    async alertMsg(msg, time, pos, colr) {
+        const toast = await this.toastCtrl.create({
+            message: msg,
+            duration: time,
+            position: pos,
+            color: colr
+        });
+        toast.present();
     }
 
     ngOnInit() {
@@ -29,13 +41,14 @@ export class VendorlistPage implements OnInit {
      */
     getVendorList() {
         this.vendorList = this.vendorFilterList = null;
-        this.vendorSvrc.getAllVendor().subscribe(value => {
-            console.log(value);
-            this.vendorList = this.vendorFilterList = value;
-        }, async error1 => {
-            console.log(error1);
+        this.nativeHttp.get(DataProviderService.getAllVendor, {}, {}).then((response) => {
+            console.log(response.data);
+            response.data = JSON.parse(response.data);
+            this.vendorList = this.vendorFilterList = response.data;
+        }).catch((error) => {
+            console.log(error.error);
             this.vendorList = this.vendorFilterList = [];
-            this.vendorSvrc.alertMsg(error1.message, 4000, 'middle', 'warning');
+            this.alertMsg(error.error, 3500, 'middle', 'warning');
         });
     }
 
@@ -52,10 +65,8 @@ export class VendorlistPage implements OnInit {
         }
 
         // On fait un trie en fonction des nom ou des prenom commençant par la lettre saisie
-        this.vendorFilterList = this.vendorFilterList.filter(utilisateur => {
-            if (utilisateur.nom.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
-                return true;
-            } else if (utilisateur.prenom.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
+        this.vendorFilterList = this.vendorList.filter(vnd => {
+            if (vnd.nom.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
                 return true;
             }
         });
@@ -69,7 +80,7 @@ export class VendorlistPage implements OnInit {
             animated: true,
             component: VendoraddPage,
             componentProps: {
-                vndr: this.fournisseur,
+                vndr: new Vendor(),
                 func: 'create'
             }
         });
@@ -77,7 +88,7 @@ export class VendorlistPage implements OnInit {
         modal.onDidDismiss().then((response) => {
             if (response.data) {
                 this.vendorList.push(response.data);
-                this.vendorSvrc.alertMsg('Fournisseur crée avec succeès', 2000, 'top', 'success');
+                this.alertMsg('Fournisseur Créer avec succès', 3500, 'top', 'success');
             }
         });
 
@@ -116,10 +127,10 @@ export class VendorlistPage implements OnInit {
             // une fois le delai de 5 sec passé, si la demande de suppression est effective on supprime alors en BD
             response.onWillDismiss().then((res) => {
                 if (this.isDelete) {
-                    this.vendorSvrc.deleteVendor(vndor.idFournisseur).subscribe(value => {
-                        this.vendorSvrc.alertMsg('Fournisseur Supprimé avec succès', 2000, 'top', 'success');
-                    }, error1 => {
-                        this.vendorSvrc.alertMsg(error1.error.message, 4000, 'top', 'danger');
+                    this.nativeHttp.delete(DataProviderService.deleteVendor + vndor.idFournisseur +'/', {}, {}).then((response) => {
+                        this.alertMsg('Fournisseur Supprimé avec succès', 2000, 'top', 'success');
+                    }).catch((error1) => {
+                        DataProviderService.alertBox(error1.error, 4000, 'top', 'danger');
                         this.isDelete = false;
                         this.vendorList.splice(index, 0, vndor);
                     });
@@ -147,7 +158,7 @@ export class VendorlistPage implements OnInit {
                 const pos: number = this.vendorList.indexOf(vndor);
                 this.vendorList.splice(pos, 1);
                 this.vendorList.splice(pos, 0, response.data);
-                this.vendorSvrc.alertMsg('Fournisseur Modifié avec succeès', 2000, 'top', 'success');
+               this.alertMsg('Fournisseur Modifié avec succeès', 2000, 'top', 'success');
             }
         });
 

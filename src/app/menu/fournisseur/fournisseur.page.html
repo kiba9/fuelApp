@@ -13,7 +13,8 @@
         <ion-item>
             <ion-icon color="primary" name="cube" slot="start"></ion-icon>
             <ion-label position="floating">Fournisseur</ion-label>
-            <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="vendor">
+            <ion-select [interfaceOptions]="customAlertOptions" [(ngModel)]="vendor" [compareWith]="compareFn"
+                        [selectedText]="(vendor!==null)? vendor.nom : '' ">
                 <ion-select-option *ngFor=" let vndr of listFournisseur"
                                    [value]="vndr">{{vndr.nom}}</ion-select-option>
             </ion-select>
